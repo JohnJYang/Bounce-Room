@@ -21,10 +21,6 @@ def round_to_one(num):
     return num
 
 
-def momentum(mass, speed):
-    return mass * speed
-
-
 class Ball(pygame.sprite.Sprite):
 
     def __init__(self, initx, inity, speed, angle, radius, c, num):
@@ -100,9 +96,9 @@ class Ball(pygame.sprite.Sprite):
 
 
 ball_list = []
-num_balls = randint(5, 20)
+num_balls = randint(2, 20)
 
-for i in range(20):
+for i in range(num_balls):
     ball_list.append(Ball(randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT), randint(5, 20), randint(15, 345), randint(10, 40), (randint(0, 255), randint(0, 255), randint(0, 255)), i))
 
 
