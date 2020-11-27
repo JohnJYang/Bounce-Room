@@ -10,7 +10,7 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 1400, 700
 fps = 60
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
-pygame.display.set_caption('Table')
+pygame.display.set_caption('Entropy')
 clock = pygame.time.Clock()
 
 def round_to_one(num):
@@ -45,37 +45,48 @@ class Ball(pygame.sprite.Sprite):
         
     def calc_speed(self, other):
         if self.lastcld != other.num:
+            old_spdx, old_spdy = self.spdx, self.spdy
             self.spdx = (self.mass - other.mass) / (self.mass + other.mass) * self.spdx + 2 * other.mass / (self.mass + other.mass) * other.spdx
             self.spdy = (self.mass - other.mass) / (self.mass + other.mass) * self.spdy + 2 * other.mass / (self.mass + other.mass) * other.spdy
+            self.spdx *= 0.99
+            self.spdy *= 0.99
             self.rect.x += self.spdx
             self.rect.y += self.spdy
             self.lastcld = other.num
             self.lastwall = None
+            other.spdx = 2 * self.mass / (self.mass + other.mass) * old_spdx + (other.mass - self.mass) / (self.mass + other.mass) * other.spdx
+            other.spdy = 2 * self.mass / (self.mass + other.mass) * old_spdy + (other.mass - self.mass) / (self.mass + other.mass) * other.spdy
+            other.spdx *= 0.99
+            other.spdy *= 0.99
+            other.rect.x += other.spdx
+            other.rect.y += other.spdy
+            other.lastcld = self.num
+            other.lastwall = None
             
     def move(self):
         if self.rect.left <= 0 and self.lastwall != 'left':
-            self.spdx *= -1
+            self.spdx *= -0.99
             self.spdx = round_to_one(self.spdx)
             self.rect.x += self.spdx
             self.rect.y += self.spdy
             self.lastwall = 'left'
             self.lastcld = None
         elif self.rect.right >= SCREEN_WIDTH and self.lastwall != 'right':
-            self.spdx *= -1
+            self.spdx *= -0.99
             self.spdx = round_to_one(self.spdx)
             self.rect.x += self.spdx
             self.rect.y += self.spdy
             self.lastwall = 'right'
             self.lastcld = None
         elif self.rect.top <= 0 and self.lastwall != 'top':
-            self.spdy *= -1
+            self.spdy *= -0.99
             self.spdy = round_to_one(self.spdy)
             self.rect.x += self.spdx
             self.rect.y += self.spdy
             self.lastwall = 'top'
             self.lastcld = None
         elif self.rect.bottom >= SCREEN_HEIGHT and self.lastwall != 'bottom':
-            self.spdy *= -1
+            self.spdy *= -0.99
             self.spdy = round_to_one(self.spdy)
             self.rect.x += self.spdx
             self.rect.y += self.spdy
@@ -91,7 +102,7 @@ class Ball(pygame.sprite.Sprite):
 ball_list = []
 num_balls = randint(5, 20)
 
-for i in range(2):
+for i in range(20):
     ball_list.append(Ball(randint(0, SCREEN_WIDTH), randint(0, SCREEN_HEIGHT), randint(5, 20), randint(15, 345), randint(10, 40), (randint(0, 255), randint(0, 255), randint(0, 255)), i))
 
 
